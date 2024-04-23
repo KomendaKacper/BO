@@ -1,5 +1,4 @@
 import numpy as np
-from copy import copy
 def metoda_wegierska(koszty):
     #1: Redukcja całkowita
     koszty = redukcja_calkowita(koszty)
@@ -21,25 +20,19 @@ def metoda_wegierska(koszty):
             rozwiazanie = znajdz_zerowy_element(koszty)
     return rozwiazanie
 
+# def wykreslanie_zer_min_linii()
 
 def redukcja_calkowita(matrix):
     # Zmniejszenie macierzy szukając najmniejszej wartości w wierszu nastepnie w kolumnie
     # Zmniejszenie wiersza
-    m = np.array(copy(matrix))
+    row_mins = matrix.min(axis=1)
+    row_reduced = matrix - row_mins.reshape(-1, 1)
 
-    for row in m:
-        if 0 not in row:
-            smallestElement = min(row)
-            for idx, element in enumerate(row):
-                row[idx] = element - smallestElement
-    m = m.T
-    for row in m:
-        if 0 not in row:
-            smallestElement = min(row)
-            for idx, element in enumerate(row):
-                row[idx] = element - smallestElement
+    # Obrót macierzy i redukcja kolumn
+    col_mins = row_reduced.min(axis=0)
+    col_reduced = row_reduced - col_mins
 
-    return m.T
+    return col_reduced
 
 def znajdz_zerowy_element(zero_mat):
     mark_zero = []
@@ -63,7 +56,7 @@ def znajdz_zerowy_element(zero_mat):
         else:
             break  # Jeśli nie ma już zer do wyznaczenia, przerywamy pętlę
 
-    return mark_zero[0], mark_zero
+    return mark_zero
 
 def adjust_matrix(mat, cover_rows, cover_cols):
     cur_mat = np.copy(mat)
@@ -92,48 +85,21 @@ def adjust_matrix(mat, cover_rows, cover_cols):
 
     return cur_mat
 
-def wykreslanie_zer_min_linii(koszty):
-    # Krok 1: Znalezienie minimum w każdym wierszu
-    min_wierszy = [min(wiersz) for wiersz in koszty]
-    
-    # Krok 2: Znalezienie minimum w każdej kolumnie
-    min_kolumn = [min(koszty[i][j] for i in range(len(koszty))) for j in range(len(koszty[0]))]
-    
-    # Krok 3: Inicjalizacja tablicy zaznaczeń dla wierszy i kolumn
-    zaznaczone_wiersze = [False] * len(koszty)
-    zaznaczone_kolumny = [False] * len(koszty[0])
-    
-    # Krok 4: Zaznaczanie zer, które pokrywają się z minimalnymi wartościami z Kroków 1 i 2
-    for i in range(len(koszty)):
-        for j in range(len(koszty[i])):
-            if koszty[i][j] == min_wierszy[i] and koszty[i][j] == min_kolumn[j]:
-                zaznaczone_wiersze[i] = True
-                zaznaczone_kolumny[j] = True
-    
-    # Krok 5: Inicjalizacja tablicy rzędów i kolumn
-    rzedy_do_wykreslenia = [i for i, zaznaczony in enumerate(zaznaczone_wiersze) if not zaznaczony]
-    kolumny_do_wykreslenia = [j for j, zaznaczony in enumerate(zaznaczone_kolumny) if zaznaczony]
-    
-    return rzedy_do_wykreslenia, kolumny_do_wykreslenia
+koszty = np.array([
+    [4,2,5,7],[8,3,10,8],[12,5,4,5],[6,3,7,14]
+])
 
-# Przykładowe użycie:
-koszty = [
-[0,0,3,4],[3,0,7,4],[6,1,0,0],[1,0,4,10]
-]
+rozwiazanie = redukcja_calkowita(koszty)
+print(rozwiazanie)
 
-rzedy, kolumny = wykreslanie_zer_min_linii(koszty)
-print("Rzędy do wykreślenia:", rzedy)
-print("Kolumny do wykreślenia:", kolumny)
+# rows, cols = wykreslanie_zer_min_linii(rozwiazanie)
+# matrix = adjust_matrix(rozwiazanie, rows, cols)
+# print (matrix)
 
-# Przykładowe użycie:
-koszty = np.array([ [4,  6,  6,  5, 10,  6,  7],
-                    [7, 13, 10,  9, 15, 12, 14],
-                    [7, 13, 13, 13,  9, 12, 11],
-                    [0, 10,  6,  8,  5,  6, 12],
-                    [7,  4,  8, 15, 13, 11,  5],
-                    [3,  3,  4,  4,  4,  5, 10],
-                    [15, 12, 15, 14, 10, 12,  5]])
+koszty_przed_adjust = [[0,0,0,1],[3,0,4,1],[9,4,0,0],[1,0,1,7]]
+rows = [0,2]
+cols = [1]
+koszty_po_adjust = (adjust_matrix(koszty_przed_adjust,rows, cols))
 
-rzedy, kolumny = wykreslanie_zer_min_linii(koszty)
-print("Rzędy do wykreślenia:", rzedy)
-print("Kolumny do wykreślenia:", kolumny)
+zera = znajdz_zerowy_element(koszty_po_adjust)
+print (zera)
