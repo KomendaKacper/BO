@@ -2,8 +2,11 @@ import numpy as np
 from copy import copy
 def metoda_wegierska(koszty):
     #1: Redukcja całkowita
+    print(f"Macierz początkowa: \n {np.array(koszty)}\n")
     koszty = redukcja_calkowita(koszty)
-    print (koszty)
+
+    print(f"Macierz po redukcji: \n{koszty}\n")
+    
     #2: Inicjalizacja
     n = len(koszty)
     count_zero_lines = 0
@@ -11,7 +14,7 @@ def metoda_wegierska(koszty):
     #3: Wykonanie iteracji, dopóki nie zostaną wybrane wszystkie elementy
     while count_zero_lines < n:
         zaznaczone_wiersze, zaznaczone_kolumny = wykreslanie_zer_min_linii(koszty)
-        print (zaznaczone_wiersze)
+        print(zaznaczone_wiersze)
         print (zaznaczone_kolumny)
         count_zero_lines = len(zaznaczone_wiersze) + len(zaznaczone_kolumny)
 
@@ -25,19 +28,29 @@ def metoda_wegierska(koszty):
 def redukcja_calkowita(matrix):
     # Zmniejszenie macierzy szukając najmniejszej wartości w wierszu nastepnie w kolumnie
     # Zmniejszenie wiersza
-    m = np.array(copy(matrix))
+    m = np.array(matrix)
 
-    for row in m:
+    # 
+    reduction_row = [0] * np.size(m[0])
+    reduction_column = [0] * np.size(m[1])
+
+    for row_idx, row in enumerate(m):
         if 0 not in row:
             smallestElement = min(row)
+            reduction_column[row_idx] = smallestElement
             for idx, element in enumerate(row):
                 row[idx] = element - smallestElement
     m = m.T
-    for row in m:
-        if 0 not in row:
-            smallestElement = min(row)
-            for idx, element in enumerate(row):
-                row[idx] = element - smallestElement
+    for col_idx, col in enumerate(m):
+        if 0 not in col:
+            smallestElement = min(col)
+            reduction_row[col_idx] = smallestElement
+            for idx, element in enumerate(col):
+                col[idx] = element - smallestElement
+
+    reduction_column = np.array([[x] for x in reduction_column])
+
+    print(f"Kolumna redukcyjna: \n{np.array(reduction_column)}\nWiersz redukcyjny: {reduction_row}\n")
 
     return m.T
 
@@ -123,10 +136,11 @@ koszty = [
     [1, 0, 0]
 ]
 
-rzedy, kolumny = wykreslanie_zer_min_linii(koszty)
+rzedy, kolumny = metoda_wegierska(koszty)
 print("Rzędy do wykreślenia:", rzedy)
 print("Kolumny do wykreślenia:", kolumny)
 
+"""
 # Przykładowe użycie:
 koszty = np.array([ [4,  6,  6,  5, 10,  6,  7],
                     [7, 13, 10,  9, 15, 12, 14],
@@ -138,4 +152,4 @@ koszty = np.array([ [4,  6,  6,  5, 10,  6,  7],
 
 rzedy, kolumny = wykreslanie_zer_min_linii(koszty)
 print("Rzędy do wykreślenia:", rzedy)
-print("Kolumny do wykreślenia:", kolumny)
+print("Kolumny do wykreślenia:", kolumny)"""
