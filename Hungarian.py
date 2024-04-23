@@ -25,7 +25,7 @@ def metoda_wegierska(koszty):
 def redukcja_calkowita(matrix):
     # Zmniejszenie macierzy szukając najmniejszej wartości w wierszu nastepnie w kolumnie
     # Zmniejszenie wiersza
-    m = copy(matrix)
+    m = np.array(copy(matrix))
 
     for row in m:
         if 0 not in row:
